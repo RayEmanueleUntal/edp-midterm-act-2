@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDP - Signup</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <h2>EDP - Act 2</h2>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <form class="auth-form" id="signup-form">
+          <h3>Sign Up</h3>
+
+          <!-- Username -->
+          <div class="input-field">
+            <label>Username</label>
+            <input name="username" id="username-field" required />
+          </div>
+
+          <!-- Email -->
+          <div class="input-field">
+            <label for="email-field">Email</label>
+            <input type="email" name="email" id="email-field" required />
+          </div>
+
+          <!-- Password -->
+          <div class="input-field">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              id="password-field"
+              required
+            />
+          </div>
+
+          <button type="submit" class="submit-btn">Sign up</button>
+        </form>
+
+        <div class="auth-alt">
+          <p>
+            Already have an account??
+            <span><a href="./Login.html">LOGIN</a></span>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../script/ui-handler.js"></script>
+  </body>
+</html>

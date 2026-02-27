@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDP - Home</title>
+    <link rel="stylesheet" href="../style.css" />
+    <!-- Guard -->
+    <script type="module">
+      import { getCurrentUser, logout } from "../script/auth.js";
+      const currUser = getCurrentUser();
+      if (!currUser) {
+        window.location.href = "./Login.html";
+      } else {
+        window.addEventListener("DOMContentLoaded", () => {
+          document.getElementById("username").textContent = currUser.username;
+          document.getElementById("email").textContent = currUser.email;
+
+          document
+            .getElementById("logout-btn")
+            .addEventListener("click", () => {
+              logout();
+              window.location.href = "./Login.html";
+            });
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <h2>EDP - Act 2</h2>
+        <button id="logout-btn">Logout</button>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <h2>Homepage</h2>
+        <h4>Username: <span id="username"></span></h4>
+        <h4>Email: <span id="email"></span></h4>
+      </div>
+    </main>
+  </body>
+</html>
