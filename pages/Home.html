@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EDP - Home</title>
     <link rel="stylesheet" href="../style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
     <!-- Guard -->
     <script type="module">
       import { getCurrentUser, logout } from "../script/auth/auth.js";
@@ -13,8 +17,8 @@
         window.location.href = "./Login.html";
       } else {
         window.addEventListener("DOMContentLoaded", () => {
-          document.getElementById("username").textContent = currUser.username;
-          document.getElementById("email").textContent = currUser.email;
+          // document.getElementById("username").textContent = currUser.username;
+          // document.getElementById("email").textContent = currUser.email;
 
           document
             .getElementById("logout-btn")
@@ -35,10 +39,28 @@
     </header>
     <main>
       <div class="container">
-        <h2>Homepage</h2>
-        <h4>Username: <span id="username"></span></h4>
-        <h4>Email: <span id="email"></span></h4>
+        <div class="cart-container">
+          <button id="show-cart" onclick="">
+            <span class="material-symbols-outlined">shopping_cart</span>
+          </button>
+        </div>
+
+        <form class="price-filter-container">
+          <div class="price-filter">
+            <label for="min-price">Min</label>
+            <input type="number" id="min-price" />
+          </div>
+          <div class="price-filter">
+            <label for="max-price"></label>
+            <input type="number" id="max-price" />
+          </div>
+          <button type="submit">Apply</button>
+        </form>
+
+        <div id="product-grid"></div>
       </div>
     </main>
+
+    <script type="module" src="../script/shop/ui-handler.js"></script>
   </body>
 </html>
