@@ -21,10 +21,11 @@ function cleanImageUrl(url) {
   return clean;
 }
 
-async function initShop(cat = 2) {
+async function initShop(cat = 1) {
   try {
+    // Change the URL to this:
     const response = await fetch(
-      `https://api.escuelajs.co/api/v1/products?categoryId=${cat}&offset=0&limit=30`,
+      `https://api.escuelajs.co/api/v1/products/?categoryId=${cat}&offset=0&limit=40`,
     );
     allProducts = await response.json();
     renderProducts(allProducts);
@@ -35,6 +36,7 @@ async function initShop(cat = 2) {
 }
 
 function renderProducts(products) {
+  console.log(products.length);
   if (!grid) return;
   grid.innerHTML = products
     .map(
@@ -179,4 +181,4 @@ window.handleCheckout = () => {
 };
 
 // Start the app
-initShop(2); // Category 2 is usually Electronics
+initShop(2);
