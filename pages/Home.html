@@ -3,63 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDP - Home</title>
+    <title>EDP Shop | Modern Orange</title>
     <link rel="stylesheet" href="../style.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
     />
-    <!-- Guard -->
     <script type="module">
       import { getCurrentUser, logout } from "../script/auth/auth.js";
-      const currUser = getCurrentUser();
-      if (!currUser) {
-        window.location.href = "./Login.html";
-      } else {
-        window.addEventListener("DOMContentLoaded", () => {
-          // document.getElementById("username").textContent = currUser.username;
-          // document.getElementById("email").textContent = currUser.email;
+      const user = getCurrentUser();
+      if (!user) window.location.href = "./Login.html";
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("user-display").textContent = user.email;
+        document.getElementById("logout-btn").onclick = () => {
+          logout();
+          window.location.reload();
+        };
 
-          document
-            .getElementById("logout-btn")
-            .addEventListener("click", () => {
-              logout();
-              window.location.href = "./Login.html";
-            });
-        });
-      }
+        // Toggle Cart Modal
+        const cartBtn = document.getElementById("cart-toggle");
+        const cartDrawer = document.getElementById("cart-drawer");
+        cartBtn.onclick = () => cartDrawer.showModal();
+        window.closeCart = () => cartDrawer.close();
+      });
     </script>
   </head>
   <body>
-    <header>
+    <header class="glass-header">
       <div class="header-content">
-        <h2>EDP - Act 2</h2>
-        <button id="logout-btn">Logout</button>
-      </div>
-    </header>
-    <main>
-      <div class="container">
-        <div class="cart-container">
-          <button id="show-cart" onclick="">
+        <h1 class="logo">EDP<span>Shop</span></h1>
+        <div class="header-right">
+          <span id="user-display"></span>
+          <button id="cart-toggle" class="icon-btn">
             <span class="material-symbols-outlined">shopping_cart</span>
           </button>
+          <button id="logout-btn" class="logout-btn">Logout</button>
         </div>
-
-        <form class="price-filter-container">
-          <div class="price-filter">
-            <label for="min-price">Min</label>
-            <input type="number" id="min-price" />
-          </div>
-          <div class="price-filter">
-            <label for="max-price"></label>
-            <input type="number" id="max-price" />
-          </div>
-          <button type="submit">Apply</button>
-        </form>
-
-        <div id="product-grid"></div>
       </div>
+    </header>
+
+    <main class="shop-container">
+      <section class="filter-bar glass">
+        <form class="price-filter-container">
+          <span>Filter by Price:</span>
+          <input type="number" id="min-price" placeholder="₱ Min" />
+          <input type="number" id="max-price" placeholder="₱ Max" />
+          <button type="submit" class="btn-primary">Apply</button>
+        </form>
+      </section>
+
+      <div id="product-grid" class="product-grid"></div>
     </main>
+
+    <dialog id="cart-drawer" class="glass-modal">
+      <div class="modal-header">
+        <h3>Your Cart</h3>
+        <button onclick="closeCart()" class="close-btn">&times;</button>
+      </div>
+      <div id="cart-items" class="cart-list"></div>
+      <div class="cart-footer">
+        <h4 id="total-price">Total: ₱0</h4>
+        <button class="btn-checkout" onclick="handleCheckout()">
+          PROCEED TO CHECKOUT
+        </button>
+      </div>
+    </dialog>
+
+    <dialog id="checkout-dialog" class="custom-modal"></dialog>
 
     <script type="module" src="../script/shop/ui-handler.js"></script>
   </body>
