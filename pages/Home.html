@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../style.css" />
     <!-- Guard -->
     <script type="module">
-      import { getCurrentUser, logout } from "../script/auth.js";
+      import { getCurrentUser, logout } from "../script/auth/auth.js";
       const currUser = getCurrentUser();
       if (!currUser) {
         window.location.href = "./Login.html";

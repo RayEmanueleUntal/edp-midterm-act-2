@@ -7,7 +7,7 @@
   </head>
   <body>
     <script type="module">
-      import { getCurrentUser } from "./script/auth.js";
+      import { getCurrentUser } from "./script/auth/auth.js";
       if (getCurrentUser()) {
         window.location.href = "./pages/Home.html";
       } else {
