@@ -1,4 +1,4 @@
-import * as Shop from "./shop.js"; // Ensure shop.js has the logic functions
+import * as Shop from "./shop.js";
 import { getCurrentUser } from "../auth/auth.js";
 
 let allProducts = [];
@@ -9,25 +9,14 @@ const cartItemsContainer = document.querySelector("#cart-items");
 const totalPriceEl = document.querySelector("#total-price");
 const checkoutDialog = document.querySelector("#checkout-dialog");
 
-/**
- * Helper to clean the Escuela API image strings
- */
-function cleanImageUrl(url) {
-  if (!url) return "https://placehold.co/400x400?text=No+Image";
-  // Remove brackets, quotes, and backslashes often found in this API's data
-  let clean = url.replace(/[\[\]\"\\]/g, "");
-  if (!clean.startsWith("http"))
-    return "https://placehold.co/400x400?text=Invalid+URL";
-  return clean;
-}
-
-async function initShop(cat = 1) {
+async function initShop(cat = 1, limit = 40) {
   try {
-    // Change the URL to this:
+    await Shop.initCurrency("USD", "PHP");
     const response = await fetch(
-      `https://api.escuelajs.co/api/v1/products/?categoryId=${cat}&offset=0&limit=40`,
+      `https://api.escuelajs.co/api/v1/products/?categoryId=${cat}&offset=0&limit=${limit}`,
     );
     allProducts = await response.json();
+    console.log(allProducts);
     renderProducts(allProducts);
     renderCart();
   } catch (error) {
@@ -36,23 +25,31 @@ async function initShop(cat = 1) {
 }
 
 function renderProducts(products) {
-  console.log(products.length);
   if (!grid) return;
   grid.innerHTML = products
     .map(
       (p) => `
             <div class="product-card">
                 <div class="img-container">
+                    ${
+                      p.images.length > 1
+                        ? `
+                        <button class="nav-btn prev" onclick="changeImage(${p.id}, -1)">&#10094;</button>
+                        <button class="nav-btn next" onclick="changeImage(${p.id}, 1)">&#10095;</button>
+                    `
+                        : ""
+                    }
                     <img 
-                        src="${cleanImageUrl(p.images[0])}" 
+                        id="img-${p.id}"
+                        src="${p.images[0]}" 
                         alt="${p.title}" 
-                        onerror="this.onerror=null;this.src='https://placehold.co/400x400?text=No+Image';" 
+                        data-index="0"
                         style="width:100%"
                     >
                 </div>
                 <div class="card-info">
                     <h4>${p.title}</h4>
-                    <p class="price">₱${p.price}</p>
+                    <p class="price">₱${Shop.convertAmt(p.price)}</p>
                     <button class="add-btn" onclick="handleAddToCart(${p.id})">Add to Cart</button>
                 </div>
             </div>
@@ -61,9 +58,30 @@ function renderProducts(products) {
     .join("");
 }
 
-// --- Global Handlers (Attached to window for Module Scope) ---
+// --- Global Handlers ---
 
-window.handleAddToCart = (id) => {
+window.changeImage = (id, delta) => {
+  const product = allProducts.find((p) => p.id === id);
+  if (!product) return;
+
+  // Initialize index if it doesn't exist
+  if (product.currentImgIndex === undefined) product.currentImgIndex = 0;
+
+  let newIndex = product.currentImgIndex + delta;
+
+  // Logic to loop
+  if (newIndex >= product.images.length) newIndex = 0;
+  if (newIndex < 0) newIndex = product.images.length - 1;
+
+  // Update the actual object in the array (the "State")
+  product.currentImgIndex = newIndex;
+
+  // 2. Trigger a UI update for just this card
+  const imgEl = document.querySelector(`#img-${id}`);
+  if (imgEl) imgEl.src = product.images[newIndex];
+};
+
+window.handleAddToCart = async (id) => {
   const product = allProducts.find((p) => p.id === id);
   if (product) {
     Shop.addToCart(product);
@@ -71,12 +89,12 @@ window.handleAddToCart = (id) => {
   }
 };
 
-window.changeQty = (id, delta) => {
+window.changeQty = async (id, delta) => {
   Shop.updateQty(id, delta);
   renderCart();
 };
 
-window.removeItem = (id) => {
+window.removeItem = async (id) => {
   Shop.removeFromCart(id);
   renderCart();
 };
@@ -96,7 +114,7 @@ function renderCart() {
             <div class="cart-item">
                 <div class="cart-item-info">
                     <strong>${item.name}</strong>
-                    <span>₱${item.price} each</span>
+                    <span>₱${Shop.convertAmt(item.price)} each</span>
                 </div>
                 <div class="qty-ctrl">
                     <button onclick="changeQty(${item.id}, -1)">-</button>
@@ -104,7 +122,7 @@ function renderCart() {
                     <button onclick="changeQty(${item.id}, 1)">+</button>
                 </div>
                 <div class="cart-item-subtotal">
-                    <span>₱${item.price * item.quantity}</span>
+                    <span>₱${Shop.convertAmt(item.price * item.quantity)}</span>
                     <button class="remove-btn" onclick="removeItem(${item.id})">×</button>
                 </div>
             </div>
@@ -112,13 +130,13 @@ function renderCart() {
     )
     .join("");
 
-  totalPriceEl.textContent = `Total: ₱${Shop.calculateTotal()}`;
+  totalPriceEl.textContent = `Total: ₱${Shop.convertAmt(Shop.calculateTotal())}`;
 }
 
 // Filter Logic
 const filterForm = document.querySelector(".price-filter-container");
 if (filterForm) {
-  filterForm.addEventListener("submit", (e) => {
+  filterForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const min = parseFloat(document.querySelector("#min-price").value) || 0;
     const max =
@@ -139,7 +157,7 @@ window.handleCheckout = () => {
 
   // Construct Payload (Meets Criteria 4.b)
   const payload = {
-    userInfo: { email: user.email },
+    userInfo: { email: user.email, username: user.username },
     cartItems: Shop.cart,
     totalPrice: Shop.calculateTotal(),
   };
@@ -158,7 +176,7 @@ window.handleCheckout = () => {
                 <div class="success-msg">
                     <span style="font-size: 3rem;">🧡</span>
                     <h3>Order Successful!</h3>
-                    <p>Thank you for shopping, ${user.email}!</p>
+                    <p>Thank you for shopping, ${user.username}!</p>
                     <button onclick="window.location.reload()" class="btn-apply">Return Home</button>
                 </div>`;
 

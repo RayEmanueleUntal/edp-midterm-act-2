@@ -1,4 +1,4 @@
-// Shop Logic - The Brain
+// Shop Logic
 export let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 export function addToCart(product) {
@@ -41,4 +41,26 @@ function saveCart() {
 export function clearCart() {
   cart = [];
   localStorage.removeItem("cart");
+}
+
+// Converting from USD
+
+let rate = 1;
+
+export async function initCurrency(src_curr = "USD", target_curr = "PHP") {
+  try {
+    const resp = await fetch(
+      `https://api.frankfurter.dev/v2/rates?base=${src_curr}&quotes=${target_curr}`,
+    );
+    const data = await resp.json();
+    rate = data[0].rate;
+    console.log("Rate updated:", rate);
+  } catch (err) {
+    console.error("Rate fetch failed, using 1", err);
+    rate = 1;
+  }
+}
+
+export function convertAmt(amt) {
+  return (amt * rate).toFixed(2);
 }

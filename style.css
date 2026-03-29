@@ -286,3 +286,42 @@ header {
   font-weight: 600;
   letter-spacing: 1px;
 }
+
+/* Carousel */
+/* Container must be relative to position arrows */
+.img-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Base style for navigation buttons */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.3s ease;
+  border-radius: 4px;
+}
+
+/* Show buttons when hovering over the card */
+.product-card:hover .nav-btn {
+  opacity: 1;
+}
+
+.prev {
+  left: 5px;
+}
+.next {
+  right: 5px;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}

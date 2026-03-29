@@ -1,0 +1,7 @@
+1. Add USD to PHP Conversion Feature
+2. Improve UI (Modern, Minimal, Shopee Theme)
+3. Header -> Add Profile Button
+4. Add Shopping Bag to Logo
+5. Fix Image Issues ✅
+6. New Title: Shopedpee
+7. Update so that user can switch to other images
