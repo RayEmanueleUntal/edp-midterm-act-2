@@ -35,6 +35,11 @@ async function initShop(cat = 15, limit = 40) {
 // Renders Products in the Grid
 function renderProducts(products) {
   if (!grid) return;
+
+  if (products.length === 0) {
+    grid.innerHTML = `<p style="margin-top: 50px;">No product...</p>`;
+    return;
+  }
   grid.innerHTML = products
     .map(
       (p) => `
