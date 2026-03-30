@@ -15,7 +15,8 @@
       const user = getCurrentUser();
       if (!user) window.location.href = "./Login.html";
       document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("user-display").textContent = user.email;
+        document.getElementById("user-email").textContent = user.email;
+        document.getElementById("nav-username").textContent = user.username;
         document.getElementById("logout-btn").onclick = () => {
           logout();
           window.location.reload();
@@ -31,19 +32,7 @@
   </head>
 
   <body>
-    <!-- <header class="glass-header">
-      <div class="header-content">
-        <h1 class="logo">EDP<span>Shop</span></h1>
-        <div class="header-right">
-          <span id="user-display"></span>
-          <button id="cart-toggle" class="icon-btn">
-            <span class="material-symbols-outlined">shopping_cart</span>
-          </button>
-          <button id="logout-btn" class="logout-btn">Logout</button>
-        </div>
-      </div>
-    </header> -->
-
+    <!-- Header / Navbar -->
     <header class="header" id="home-header">
       <nav class="header-content">
         <div class="nav-upper">
@@ -52,21 +41,27 @@
               >account_circle</span
             >
             <h4 id="nav-username">Test Username</h4>
+
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown">
+              <p id="user-email"></p>
+              <button id="logout-btn">Logout</button>
+            </div>
           </div>
         </div>
 
         <div class="nav-lower">
-          <div class="nav-logo">
+          <a href="Home.html" class="nav-logo">
             <img src="/public/images/shopee-icon-white.png" alt="Logo Image" />
             <h1 class="logo">Shop<span>edp</span>ee</h1>
-          </div>
+          </a>
 
           <div class="nav-search">
-            <form action="" class="nav-search-form">
+            <form action="Home.html" method="GET" class="nav-search-form">
               <div class="search-container">
                 <input
                   id="search-input"
-                  name="search-input"
+                  name="q"
                   type="text"
                   placeholder="Search products"
                 />
@@ -87,16 +82,28 @@
       </nav>
     </header>
 
+    <!-- Main Content -->
+
     <main class="shop-container">
-      <section class="filter-bar glass">
+      <!-- Filter Options -->
+      <section class="filter-bar">
         <form class="price-filter-container">
-          <span>Filter by Price:</span>
+          <span>Price Range</span>
           <input type="number" id="min-price" placeholder="₱ Min" />
+          <hr
+            style="
+              width: 30px;
+              height: 1px;
+              background-color: gray;
+              border: none;
+            "
+          />
           <input type="number" id="max-price" placeholder="₱ Max" />
           <button type="submit" class="btn-primary">Apply</button>
         </form>
       </section>
 
+      <!-- Product Grid/Cards -->
       <div id="product-grid" class="product-grid"></div>
     </main>
 
@@ -116,6 +123,6 @@
 
     <dialog id="checkout-dialog" class="custom-modal"></dialog>
 
-    <script type="module" src="../script/shop/ui-handler.js"></script>
+    <script type="module" src="/script/shop/ui-handler.js"></script>
   </body>
 </html>

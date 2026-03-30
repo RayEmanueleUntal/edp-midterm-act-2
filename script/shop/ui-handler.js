@@ -16,7 +16,6 @@ async function initShop(cat = 1, limit = 40) {
       `https://api.escuelajs.co/api/v1/products/?categoryId=${cat}&offset=0&limit=${limit}`,
     );
     allProducts = await response.json();
-    console.log(allProducts);
     renderProducts(allProducts);
     renderCart();
   } catch (error) {
@@ -198,5 +197,34 @@ window.handleCheckout = () => {
   }, 2000);
 };
 
-// Start the app
-initShop(2);
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get("q"); // This looks for ?q= in the URL
+  const category = 2;
+
+  if (query) {
+    // 1. Keep the text in the search box so the user sees what they searched for
+    const input = document.querySelector("#search-input");
+    if (input) input.value = query;
+
+    // 2. Fetch from API
+    fetch(
+      `https://api.escuelajs.co/api/v1/products/?title=${query}&categoryId=${category}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        // Important: Update global allProducts so filters still work!
+        allProducts = data;
+
+        if (data.length === 0) {
+          grid.innerHTML = `<p class="no-results">No products found for "${query}"</p>`;
+        } else {
+          renderProducts(data);
+        }
+      })
+      .catch((err) => console.error("Search error:", err));
+  } else {
+    // No search query? Load default shop
+    initShop(category);
+  }
+});
