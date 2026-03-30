@@ -58,7 +58,7 @@ function saveCart() {
 
 export function clearCart() {
   cart = [];
-  localStorage.removeItem("cart");
+  localStorage.removeItem(getCartKey());
 }
 
 export function checkout(payload) {
