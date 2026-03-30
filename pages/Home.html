@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDP Shop</title>
+    <title>Shopedpee</title>
     <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../styles/Home.css" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -28,10 +29,10 @@
       });
     </script>
   </head>
+
   <body>
-    <header class="glass-header">
+    <!-- <header class="glass-header">
       <div class="header-content">
-        <!-- <span class="material-symbols-outlined">shopping_bag</span> -->
         <h1 class="logo">EDP<span>Shop</span></h1>
         <div class="header-right">
           <span id="user-display"></span>
@@ -41,6 +42,49 @@
           <button id="logout-btn" class="logout-btn">Logout</button>
         </div>
       </div>
+    </header> -->
+
+    <header class="header" id="home-header">
+      <nav class="header-content">
+        <div class="nav-upper">
+          <div class="profile-container">
+            <span class="material-symbols-outlined" id="profile-logo"
+              >account_circle</span
+            >
+            <h4 id="nav-username">Test Username</h4>
+          </div>
+        </div>
+
+        <div class="nav-lower">
+          <div class="nav-logo">
+            <img src="/public/images/shopee-icon-white.png" alt="Logo Image" />
+            <h1 class="logo">Shop<span>edp</span>ee</h1>
+          </div>
+
+          <div class="nav-search">
+            <form action="" class="nav-search-form">
+              <div class="search-container">
+                <input
+                  id="search-input"
+                  name="search-input"
+                  type="text"
+                  placeholder="Search products"
+                />
+                <button type="submit" class="search-btn">
+                  <span class="material-symbols-outlined">search</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <a href="Cart.html" class="nav-cart">
+            <span class="material-symbols-outlined" id="cart-icon"
+              >shopping_cart</span
+            >
+            <span class="badge" id="cart-badge">2</span>
+          </a>
+        </div>
+      </nav>
     </header>
 
     <main class="shop-container">

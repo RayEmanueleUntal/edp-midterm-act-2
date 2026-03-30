@@ -143,7 +143,7 @@ if (filterForm) {
       parseFloat(document.querySelector("#max-price").value) || Infinity;
 
     const filtered = allProducts.filter(
-      (p) => p.price >= min && p.price <= max,
+      (p) => Shop.convertAmt(p.price) >= min && Shop.convertAmt(p.price) <= max,
     );
     renderProducts(filtered);
   });

@@ -4,4 +4,6 @@
 4. Add Shopping Bag to Logo
 5. Fix Image Issues ✅
 6. New Title: Shopedpee
-7. Update so that user can switch to other images
+7. Update so that user can switch to other images ✅
+8. Fix filter since filter is based on USD ✅
+9. Add Search Bar
