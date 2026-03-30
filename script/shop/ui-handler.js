@@ -49,8 +49,8 @@ function renderProducts(products) {
                 <div class="card-info">
                     <h4>${p.title}</h4>
                     <p class="price">₱${Shop.convertAmt(p.price)}</p>
-                    <button class="add-btn" onclick="handleAddToCart(${p.id})">Add to Cart</button>
                 </div>
+                <button class="add-btn" onclick="handleAddToCart(${p.id})">Add to Cart</button>
             </div>
         `,
     )
