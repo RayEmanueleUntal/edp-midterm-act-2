@@ -11,6 +11,7 @@ export function addToCart(product) {
       name: product.title,
       price: product.price,
       quantity: 1,
+      images: product.images,
     });
   }
   saveCart();

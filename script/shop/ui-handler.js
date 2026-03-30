@@ -3,13 +3,18 @@ import { getCurrentUser } from "../auth/auth.js";
 
 let allProducts = [];
 
-// DOM Elements
+// ===== DOM Elements =====
+
+// Products Grid
 const grid = document.querySelector("#product-grid");
+
+// Cart
 const cartItemsContainer = document.querySelector("#cart-items");
+const cartBadge = document.getElementById("cart-badge");
 const totalPriceEl = document.querySelector("#total-price");
 const checkoutDialog = document.querySelector("#checkout-dialog");
 
-async function initShop(cat = 1, limit = 40) {
+async function initShop(cat = 15, limit = 40) {
   try {
     await Shop.initCurrency("USD", "PHP");
     const response = await fetch(
@@ -98,35 +103,63 @@ window.removeItem = async (id) => {
   renderCart();
 };
 
+window.handleClearCart = async () => {
+  Shop.clearCart();
+  renderCart();
+};
+
 function renderCart() {
   if (!cartItemsContainer) return;
 
-  if (Shop.cart.length === 0) {
+  const itemCount = Shop.cart.length;
+
+  if (itemCount === 0) {
     cartItemsContainer.innerHTML = `<p class="empty-msg">Your cart is empty</p>`;
+    cartBadge.style.display = "none";
     totalPriceEl.textContent = `Total: ₱0`;
     return;
   }
 
+  // Update Badge
+  cartBadge.style.display = "Block";
+  cartBadge.innerText = itemCount;
+
+  // Update Cart Content
   cartItemsContainer.innerHTML = Shop.cart
-    .map(
-      (item) => `
+    .map((item) => {
+      // Ensure we have a valid image even if the API data is messy
+      const imgUrl =
+        item.images && item.images[0]
+          ? item.images[0]
+          : "https://placehold.co/100x100?text=No+Image";
+
+      return `
             <div class="cart-item">
-                <div class="cart-item-info">
-                    <strong>${item.name}</strong>
-                    <span>₱${Shop.convertAmt(item.price)} each</span>
+                <div class="cart-item-main">
+                    <img src="${imgUrl}" alt="${item.name}" class="cart-img" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                    <div class="cart-item-details">
+                        <span class="cart-item-name">${item.name}</span>
+                    </div>
                 </div>
-                <div class="qty-ctrl">
-                    <button onclick="changeQty(${item.id}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button onclick="changeQty(${item.id}, 1)">+</button>
-                </div>
-                <div class="cart-item-subtotal">
-                    <span>₱${Shop.convertAmt(item.price * item.quantity)}</span>
-                    <button class="remove-btn" onclick="removeItem(${item.id})">×</button>
+
+                <div class="cart-item-actions">
+                    <div class="unit-price">₱${Shop.convertAmt(item.price)}</div>
+                    
+                    <div class="qty-ctrl">
+                        <button onclick="changeQty(${item.id}, -1)">-</button>
+                        <span class="qty-num">${item.quantity}</span>
+                        <button onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+
+                    <div class="item-subtotal">₱${Shop.convertAmt(item.price * item.quantity)}</div>
+                    
+                    <button class="remove-btn" onclick="removeItem(${item.id})">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
                 </div>
             </div>
-        `,
-    )
+        `;
+    })
     .join("");
 
   totalPriceEl.textContent = `Total: ₱${Shop.convertAmt(Shop.calculateTotal())}`;
@@ -200,7 +233,7 @@ window.handleCheckout = () => {
 window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const query = params.get("q"); // This looks for ?q= in the URL
-  const category = 2;
+  const category = 0;
 
   if (query) {
     // 1. Keep the text in the search box so the user sees what they searched for

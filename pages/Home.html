@@ -23,7 +23,7 @@
         };
 
         // Toggle Cart Modal
-        const cartBtn = document.getElementById("cart-toggle");
+        const cartBtn = document.getElementById("nav-cart");
         const cartDrawer = document.getElementById("cart-drawer");
         cartBtn.onclick = () => cartDrawer.showModal();
         window.closeCart = () => cartDrawer.close();
@@ -72,12 +72,12 @@
             </form>
           </div>
 
-          <a href="Cart.html" class="nav-cart">
+          <button class="nav-cart" id="nav-cart">
             <span class="material-symbols-outlined" id="cart-icon"
               >shopping_cart</span
             >
-            <span class="badge" id="cart-badge">2</span>
-          </a>
+            <span class="badge" id="cart-badge"></span>
+          </button>
         </div>
       </nav>
     </header>
@@ -107,16 +107,29 @@
       <div id="product-grid" class="product-grid"></div>
     </main>
 
-    <dialog id="cart-drawer" class="glass-modal">
-      <div class="modal-header">
-        <h3>Your Cart</h3>
-        <button onclick="closeCart()" class="close-btn">&times;</button>
+    <!-- Cart Drawer -->
+    <dialog id="cart-drawer">
+      <div class="cart-header">
+        <button onclick="closeCart()" class="close-btn">
+          <span class="material-symbols-outlined">arrow_back_ios</span>
+        </button>
+        <h3>Shopping Cart</h3>
       </div>
+
       <div id="cart-items" class="cart-list"></div>
+
       <div class="cart-footer">
-        <h4 id="total-price">Total: ₱0</h4>
+        <div class="footer-top">
+          <button class="clear-all-btn" onclick="handleClearCart()">
+            Delete All
+          </button>
+          <div class="total-section">
+            <span>Total: </span>
+            <h2 id="total-price">₱0</h2>
+          </div>
+        </div>
         <button class="btn-checkout" onclick="handleCheckout()">
-          PROCEED TO CHECKOUT
+          CHECK OUT
         </button>
       </div>
     </dialog>

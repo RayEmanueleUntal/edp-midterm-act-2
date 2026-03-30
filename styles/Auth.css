@@ -4,6 +4,59 @@
   padding: 0;
 }
 
+/* Header / Navbar */
+#auth-header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  background-image: linear-gradient(
+    to bottom,
+    #f53f2d,
+    #f7492e,
+    #fa522f,
+    #fc5b31,
+    #fe6333
+  );
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: center;
+  padding-block: 5px;
+  padding-bottom: 10px;
+}
+
+.nav-lower {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-logo img {
+  height: 40px;
+  width: 40px;
+}
+
+.nav-logo h1 {
+  color: white;
+  margin-top: 10px;
+  font-weight: normal;
+  font-size: 1.7rem;
+}
+
+.nav-logo h1 span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 /* --- Auth Page Specific Styles --- */
 
 /* Centering the forms */
