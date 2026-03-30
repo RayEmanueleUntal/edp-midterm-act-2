@@ -14,8 +14,12 @@ const cartBadge = document.getElementById("cart-badge");
 const totalPriceEl = document.querySelector("#total-price");
 const checkoutDialog = document.querySelector("#checkout-dialog");
 
+// ====== Main Code ========
+
+// Initialize Shop
 async function initShop(cat = 15, limit = 40) {
   try {
+    Shop.loadUserCart();
     await Shop.initCurrency("USD", "PHP");
     const response = await fetch(
       `https://api.escuelajs.co/api/v1/products/?categoryId=${cat}&offset=0&limit=${limit}`,
@@ -28,6 +32,7 @@ async function initShop(cat = 15, limit = 40) {
   }
 }
 
+// Renders Products in the Grid
 function renderProducts(products) {
   if (!grid) return;
   grid.innerHTML = products
@@ -62,52 +67,7 @@ function renderProducts(products) {
     .join("");
 }
 
-// --- Global Handlers ---
-
-window.changeImage = (id, delta) => {
-  const product = allProducts.find((p) => p.id === id);
-  if (!product) return;
-
-  // Initialize index if it doesn't exist
-  if (product.currentImgIndex === undefined) product.currentImgIndex = 0;
-
-  let newIndex = product.currentImgIndex + delta;
-
-  // Logic to loop
-  if (newIndex >= product.images.length) newIndex = 0;
-  if (newIndex < 0) newIndex = product.images.length - 1;
-
-  // Update the actual object in the array (the "State")
-  product.currentImgIndex = newIndex;
-
-  // 2. Trigger a UI update for just this card
-  const imgEl = document.querySelector(`#img-${id}`);
-  if (imgEl) imgEl.src = product.images[newIndex];
-};
-
-window.handleAddToCart = async (id) => {
-  const product = allProducts.find((p) => p.id === id);
-  if (product) {
-    Shop.addToCart(product);
-    renderCart();
-  }
-};
-
-window.changeQty = async (id, delta) => {
-  Shop.updateQty(id, delta);
-  renderCart();
-};
-
-window.removeItem = async (id) => {
-  Shop.removeFromCart(id);
-  renderCart();
-};
-
-window.handleClearCart = async () => {
-  Shop.clearCart();
-  renderCart();
-};
-
+// For Rendering the Cart
 function renderCart() {
   if (!cartItemsContainer) return;
 
@@ -127,7 +87,7 @@ function renderCart() {
   // Update Cart Content
   cartItemsContainer.innerHTML = Shop.cart
     .map((item) => {
-      // Ensure we have a valid image even if the API data is messy
+      // Ensure that there's valid image url
       const imgUrl =
         item.images && item.images[0]
           ? item.images[0]
@@ -165,7 +125,60 @@ function renderCart() {
   totalPriceEl.textContent = `Total: ₱${Shop.convertAmt(Shop.calculateTotal())}`;
 }
 
-// Filter Logic
+// --- Global Handlers ---
+
+// For Carousel Feature
+window.changeImage = (id, delta) => {
+  const product = allProducts.find((p) => p.id === id);
+  if (!product) return;
+
+  // Initialize index if it doesn't exist
+  if (product.currentImgIndex === undefined) product.currentImgIndex = 0;
+
+  let newIndex = product.currentImgIndex + delta;
+
+  // Mag circle circle
+  if (newIndex >= product.images.length) newIndex = 0;
+  if (newIndex < 0) newIndex = product.images.length - 1;
+
+  // Update the actual object in the array (the "State")
+  product.currentImgIndex = newIndex;
+
+  // 2. Trigger a UI update for just this card
+  const imgEl = document.querySelector(`#img-${id}`);
+  if (imgEl) imgEl.src = product.images[newIndex];
+};
+
+// For handling Add to Cart
+window.handleAddToCart = async (id) => {
+  const user = getCurrentUser();
+  if (!user) return alert("Please log in first!");
+  const product = allProducts.find((p) => p.id === id);
+  if (product) {
+    Shop.addToCart(product);
+    renderCart();
+  }
+};
+
+// For incrementing or decrementing quantity
+window.changeQty = async (id, delta) => {
+  Shop.updateQty(id, delta);
+  renderCart();
+};
+
+// For removing an entire item (regardless of quantity) from cart
+window.removeItem = async (id) => {
+  Shop.removeFromCart(id);
+  renderCart();
+};
+
+// For clearing the entire cart
+window.handleClearCart = async () => {
+  Shop.clearCart();
+  renderCart();
+};
+
+// Price Filter Logic
 const filterForm = document.querySelector(".price-filter-container");
 if (filterForm) {
   filterForm.addEventListener("submit", async (e) => {
@@ -189,9 +202,10 @@ window.handleCheckout = () => {
 
   // Construct Payload (Meets Criteria 4.b)
   const payload = {
-    userInfo: { email: user.email, username: user.username },
-    cartItems: Shop.cart,
-    totalPrice: Shop.calculateTotal(),
+    user: { email: user.email, username: user.username },
+    cart: Shop.cart,
+    total: Shop.calculateTotal(),
+    date: new Date(),
   };
 
   checkoutDialog.innerHTML = `
@@ -212,12 +226,8 @@ window.handleCheckout = () => {
                     <button onclick="window.location.reload()" class="btn-apply">Return Home</button>
                 </div>`;
 
-      // Save payload to localStorage (Criteria 5.a)
-      const orders = JSON.parse(localStorage.getItem("order_history") || "[]");
-      orders.push(payload);
-      localStorage.setItem("order_history", JSON.stringify(orders));
-
-      Shop.clearCart();
+      // Save payload to localStorage
+      Shop.checkout(payload);
     } else {
       checkoutDialog.innerHTML = `
                 <div class="error-msg">
@@ -230,23 +240,23 @@ window.handleCheckout = () => {
   }, 2000);
 };
 
+// ====== Others =====
+// Search Feature
 window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const query = params.get("q"); // This looks for ?q= in the URL
   const category = 0;
 
   if (query) {
-    // 1. Keep the text in the search box so the user sees what they searched for
     const input = document.querySelector("#search-input");
     if (input) input.value = query;
 
-    // 2. Fetch from API
+    // Fetch from API
     fetch(
       `https://api.escuelajs.co/api/v1/products/?title=${query}&categoryId=${category}`,
     )
       .then((res) => res.json())
       .then((data) => {
-        // Important: Update global allProducts so filters still work!
         allProducts = data;
 
         if (data.length === 0) {

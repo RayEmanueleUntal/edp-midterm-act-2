@@ -1,5 +1,21 @@
 // Shop Logic
-export let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+import { getCurrentUser } from "../auth/auth.js";
+
+// For Auth
+function getCartKey() {
+  const user = getCurrentUser();
+  return user ? `cart_${user.email}` : "guest_cart";
+}
+
+// Main Shop
+export let cart = [];
+
+export function loadUserCart() {
+  const key = getCartKey();
+  const saved = localStorage.getItem(key);
+  cart = saved ? JSON.parse(saved) : [];
+}
 
 export function addToCart(product) {
   const existing = cart.find((item) => item.id === product.id);
@@ -36,12 +52,20 @@ export function calculateTotal() {
 }
 
 function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(cart));
+  const key = getCartKey();
+  localStorage.setItem(key, JSON.stringify(cart));
 }
 
 export function clearCart() {
   cart = [];
   localStorage.removeItem("cart");
+}
+
+export function checkout(payload) {
+  const orders = JSON.parse(localStorage.getItem("order_history") || "[]");
+  orders.push(payload);
+  localStorage.setItem("order_history", JSON.stringify(orders));
+  clearCart();
 }
 
 // Converting from USD
