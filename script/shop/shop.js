@@ -53,11 +53,14 @@ export function calculateTotal() {
 
 function saveCart() {
   const key = getCartKey();
+  console.log("Cart Saved");
+  console.log(cart);
   localStorage.setItem(key, JSON.stringify(cart));
 }
 
 export function clearCart() {
   cart = [];
+  console.log("Cleared Cart");
   localStorage.removeItem(getCartKey());
 }
 

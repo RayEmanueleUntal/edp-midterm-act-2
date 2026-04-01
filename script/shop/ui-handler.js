@@ -267,7 +267,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (data.length === 0) {
           grid.innerHTML = `<p class="no-results">No products found for "${query}"</p>`;
         } else {
-          renderProducts(data);
+          initShop(category);
         }
       })
       .catch((err) => console.error("Search error:", err));
